@@ -2,7 +2,7 @@ import mysql.connector
 from tabulate import tabulate
 con = mysql.connector.connect(host = 'localhost' ,
  user = 'root' ,
- passwd = 'OSO$m39{',
+ passwd = 'root',
  database = 'flight_ticket_booking_system')
 cursor = con.cursor()
 loggedin = False
