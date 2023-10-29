@@ -359,11 +359,12 @@ def cancel_booking():
 def exit():
     print('The program is succesfully ended')
 while True:
-    
+     
     print('1.Available flights')
-    print('2. Create your account')
-    print('3. login')
-    print('4.Admin login')
+    if loggedin == False:
+        print('2. Create your account')
+        print('3. login')
+        print('4.Admin login')
    
     if loggedin:
         print('5.Bookings')
@@ -380,11 +381,11 @@ while True:
         choice = int(choice)
         if choice == 1:
             Available_flights()
-        elif choice == 2:
+        elif choice == 2 and loggedin == False:
             create_CUS_ID()
-        elif choice == 3:
+        elif choice == 3 and loggedin == False:
             login()
-        elif choice == 4:
+        elif choice == 4 and loggedin == False:
             Adminlogin()
         elif choice == 5 and loggedin:
             bookings() 
@@ -399,8 +400,8 @@ while True:
             f.close()
             loggedin = False
             isAdmin = False
-            
-            user.clear()
+            print('you are successfully logged out')
+            list(user).clear()
         elif choice == 0:
             exit()
             break
