@@ -336,7 +336,6 @@ while True:
         login()
     elif choice == 4:
         Adminlogin()
-        
     elif choice == 5 and loggedin:
         bookings() 
     elif choice == 6 and loggedin:
@@ -348,6 +347,5 @@ while True:
     elif choice == 0:
         exit()
         break
-    
     else:
         print('enter a valid choice') 
