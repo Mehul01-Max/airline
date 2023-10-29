@@ -12,13 +12,16 @@ cursor.execute("use flight_booking_system")
 cursor.execute("create table if not exists Available_flights(flight_no int NOT NULL PRIMARY KEY, Airline varchar(30), Departure varchar(30) , Arrival varchar(30) , Departure_time time, Departure_date date , Arrival_time time, Arrival_date date ,Price float, Available_seat int)")
 cursor.execute("create table if not exists booking_details(ID bigint AUTO_INCREMENT NOT NULL PRIMARY KEY, Passenger_Name varchar(30) , Booking_ID bigint, PNR_no bigint, Booked_by varchar(40) , flight_no int)")
 cursor.execute("create table if not exists Customer_details(CUS_ID bigint AUTO_INCREMENT NOT NULL PRIMARY KEY,Customer_name varchar(30) , Address varchar(100) , Phone_no bigint , email varchar(50))")
-cursor.execute("insert into Available_flights values(401 , 'AIR INDIA EXPRESS' , 'KOLKATA' , 'SURAT' , '11:20:00' , '2023-11-06' , '14:25:00' , '2023-11-06' , 5999, 155)")
-cursor.execute("insert into Available_flights values(402 , 'AIR INDIA' , 'MUMBAI' , 'KOLKATA' , '06:00:00' , '2023-11-05' , '08:40:00' , '2023-11-05' ,9227, 90)")
-cursor.execute("insert into Available_flights values(403 , 'VISTARA' , 'NEW DELHI' , 'PARIS' , '13:45:00' , '2023-11-03' , '18:40:00' , '2023-11-03' ,27910,  55)")
-cursor.execute("insert into Available_flights values(404 , 'VISTARA' , 'LONDON' , 'MUMBAI' , '20:55:00' , '2023-11-04' , '11:45:00' , '2023-11-05' ,63357,  99)")
-cursor.execute("insert into Available_flights values(501 , 'INDIG0' , 'NEW DELHI' , 'MUMBAI' , '14:00:00' , '2023-11-03' , '16:20:00' , '2023-11-03' ,5357,  14)")
-cursor.execute("insert into Available_flights values(502 , 'INDIGO' , 'KOLKATA' , 'JAIPUR' , '08:15:00' , '2023-11-02' , '10:45:00' , '2023-11-02' ,8624,  65)")
-cursor.execute("insert into Available_flights values(601 , 'SPICEJET' , 'NEW DELHI' , 'DUBAI' , '19:15:00' , '2023-11-03' , '20:05:00' , '2023-11-03' ,13279,  5)")
+cursor.execute("create table if not exists Admin_details(Ad_ID bigint AUTO_INCREMENT NOT NULL PRIMARY KEY,Ad_name varchar(30) , Address varchar(100) , Phone_no bigint , email varchar(50))")
+cursor.execute("insert ignore into Available_flights values(401 , 'AIR INDIA EXPRESS' , 'KOLKATA' , 'SURAT' , '11:20:00' , '2023-11-06' , '14:25:00' , '2023-11-06' , 5999, 155)")
+cursor.execute("insert ignore into Available_flights values(402 , 'AIR INDIA' , 'MUMBAI' , 'KOLKATA' , '06:00:00' , '2023-11-05' , '08:40:00' , '2023-11-05' ,9227, 90) ")
+cursor.execute("insert ignore into Available_flights values(403 , 'VISTARA' , 'NEW DELHI' , 'PARIS' , '13:45:00' , '2023-11-03' , '18:40:00' , '2023-11-03' ,27910,  55)")
+cursor.execute("insert ignore into Available_flights values(404 , 'VISTARA' , 'LONDON' , 'MUMBAI' , '20:55:00' , '2023-11-04' , '11:45:00' , '2023-11-05' ,63357,  99)")
+cursor.execute("insert ignore into Available_flights values(501 , 'INDIG0' , 'NEW DELHI' , 'MUMBAI' , '14:00:00' , '2023-11-03' , '16:20:00' , '2023-11-03' ,5357,  14)")
+cursor.execute("insert ignore into Available_flights values(502 , 'INDIGO' , 'KOLKATA' , 'JAIPUR' , '08:15:00' , '2023-11-02' , '10:45:00' , '2023-11-02' ,8624,  65)")
+cursor.execute("insert ignore into Available_flights values(601 , 'SPICEJET' , 'NEW DELHI' , 'DUBAI' , '19:15:00' , '2023-11-03' , '20:05:00' , '2023-11-03' ,13279,  5)")
+
+cursor.execute("insert ignore into Admin_Details (Ad_name , Address , Phone_no , email)  values('Mehul Agarwal' , 'Hindmotor' , 9330562599 , 'agarwalmehul423@gmail.com')")
 con.commit()
 
 
@@ -36,7 +39,7 @@ def Add_new_Flight():
         Arrival_Date = input('enter the Arrival date(yy-mm-dd): ')
         Price = float(input('enter ticket price: '))
         Available_seat = int(input('Enter the Available_seats: '))
-        sql = "insert inot Available_flights values(%s, %s , %s , %s , %s , %s , %s , %s , %s , %s)"
+        sql = "insert ignore into Available_flights values(%s, %s , %s , %s , %s , %s , %s , %s , %s , %s)"
         values = (flight_no , Airline , Departure ,Arrival, Departure_time, Departure_Date , Arrival_time , Arrival_Date , Price , Available_seat)
         cursor.execute(sql  , values)
         con.commit()
@@ -54,8 +57,10 @@ def create_CUS_ID():
     Name = input('Enter your Name: ')
     Address = input('Enter your Address: ')
     Phone_no = input('Enter your phone no: ')
-    email = input('please enter your email id: ')
+    email = input('Enter your email id: ')
+    
     cursor.execute('Select * from customer_details ')
+    
     display = cursor.fetchall()
     for i in display:
         if email ==  str(i[4]) or Phone_no == int(i[3]):
@@ -71,6 +76,7 @@ def create_CUS_ID():
 def login():
     global loggedin
     global user
+    global isAdmin
     email = input('enter your email address: ')
     global cus_info
     cursor.execute('Select * from customer_details')
@@ -80,17 +86,41 @@ def login():
             cus_info = i
             print('you are successfully logged as' , i[1])
             loggedin = True
+            isAdmin = False 
             user = i
             break
         else:
             loggedin = False
+            
     if loggedin == False:
         print('invalid credentials please try again or create a new account')
-    
+def Adminlogin():
+    global loggedin
+    global user
+    global isAdmin
+    email = input('enter your email address: ')
+    global cus_info
+    cursor.execute('Select * from Admin_details')
+    display = cursor.fetchall()
+    for i in display:
+        if email ==  str(i[4]):
+            cus_info = i
+            print('you are successfully logged as' , i[1],'(Admin)')
+            loggedin = True
+            isAdmin = True
+            user = i
+            break
+        else:
+            loggedin = False
+            isAdmin = False
+    if loggedin == False:
+        print('invalid credentials please try again or create a new account')
+       
     
 def bookings():
     global Booking_Id
     global user
+    global isAdmin
     Available_flights()
     flight_no = int(input('Enter Flight number: '))
     isflight = False
@@ -121,8 +151,11 @@ def bookings():
                 else: 
                     Booking_Id = p[-1][0] + 1
                 for i in passengers:
-                    sql = "insert into Booking_Details (Passenger_Name , Booking_ID,  PNR_no  ,  Booked_By , Flight_no) values( %s , %s , %s, %s ,%s);"
-                    values = (i , Booking_Id , int(str(flight_no) + str(Booking_Id)) , user[1]+'('+str(user[0])+')' , flight_no )
+                    
+                    if isAdmin == False:
+                        values = (i , Booking_Id , int(str(flight_no) + str(Booking_Id)) , user[1]+'('+str(user[0])+')' , flight_no )
+                    elif isAdmin:
+                        values = (i , Booking_Id , int(str(flight_no) + str(Booking_Id)) , user[1]+'(Admin('+str(user[0])+'))' , flight_no )
                     display_lst.append(list(values))
                 header = ['Name' , 'Booking ID' , 'PNR NO' , 'BOOKED BY' , 'Flight No']
                 print(tabulate(display_lst , headers=header, tablefmt='grid'))
@@ -132,7 +165,10 @@ def bookings():
                     if confirmer == 'Y' or confirmer == 'y':
                         for i in passengers:
                             sql = "insert into Booking_Details (Passenger_Name , Booking_ID,  PNR_no  ,  Booked_By , Flight_no) values( %s , %s , %s, %s ,%s);"
-                            values = (i , Booking_Id , int(str(flight_no) + str(Booking_Id)) , user[1]+'('+str(user[0])+')' , flight_no )
+                            if isAdmin == False:
+                                values = (i , Booking_Id , int(str(flight_no) + str(Booking_Id)) , user[1]+'('+str(user[0])+')' , flight_no )
+                            elif isAdmin:
+                                values = (i , Booking_Id , int(str(flight_no) + str(Booking_Id)) , user[1]+'(Admin('+str(user[0])+'))' , flight_no )
                             cursor.execute(sql , values)
                             con.commit()
                         seats_left = total_seats - no_of_tickets
@@ -141,7 +177,6 @@ def bookings():
                         cursor.execute(sql , values)
                         con.commit()
                         print('you tickets has been successfully booked')
-                        
                         break
                     elif confirmer == 'N' or confirmer == 'n':
                         
@@ -159,28 +194,38 @@ def bookings():
         print('Please login to book tickets')
         
 def showBookings():
+    global isAdmin
+    global loggedin
     if loggedin:
-        sql = ("select * from booking_details where Booked_By = %s")
-        values = (user[1]+'('+str(user[0])+')',)
-        cursor.execute(sql , values)
+
+        if isAdmin == False:
+            sql = ("select * from booking_details where Booked_By = %s")
+            values = (user[1]+'('+str(user[0])+')',)
+            cursor.execute(sql , values)
+        elif isAdmin == True:
+            cursor.execute("select * from booking_details")
         display = cursor.fetchall()
         header = ['Name' , 'Booking ID' , 'PNR NO' , 'BOOKED BY' , 'Flight No']
         print(tabulate(display , headers=header, tablefmt='grid'))
     else:
         print('Account not logged in')
 def cancel_booking():
-    
+    global isAdmin
+    global loggedin
     if loggedin:
         while True:
             cancelled_passengers = []
             cancelled_passengers.clear()
-            sql = ("select * from booking_details where Booked_By = %s")
-            values = (user[1]+'('+str(user[0])+')',)
-            cursor.execute(sql , values)
+            if isAdmin == False:
+                sql = ("select * from booking_details where Booked_By = %s")
+                values = (user[1]+'('+str(user[0])+')',)
+                cursor.execute(sql , values)
+            elif isAdmin == True:
+                cursor.execute("select * from booking_details")
             display = cursor.fetchall()
             header = ['Name' , 'Booking ID' , 'PNR NO' , 'BOOKED BY' , 'Flight No']
             print(tabulate(display , headers=header, tablefmt='grid'))
-
+            booked_by = (user[1]+'('+str(user[0])+')',)
             print('1.For cancelling individual tickets')    
             print('2.For cancelling all the tickets you booked together') 
             choice = int(input('Enter your choice: '))
@@ -189,10 +234,15 @@ def cancel_booking():
                 name = input('enter the name of the person: ')
                 pnr_no = int(input('enter PNR NO: '))
                 for i in display:
-                    if i[1] == name and i[3] == pnr_no:
-                        cancelled_passengers.append(i)
-                        Available = True
-                header = ['Name' , 'Booking ID' , 'PNR NO' , 'BOOKED BY' , 'Flight No']
+                    if isAdmin == False:
+                        if i[1] == name and i[3] == pnr_no and i[4] == booked_by:
+                            cancelled_passengers.append(i)
+                            Available = True
+                    elif isAdmin == True:
+                        if i[1] == name and i[3] == pnr_no:
+                            cancelled_passengers.append(i)
+                            Available = True
+                    header = ['Name' , 'Booking ID' , 'PNR NO' , 'BOOKED BY' , 'Flight No']
                 print(tabulate(cancelled_passengers , headers=header, tablefmt='grid'))
                 if Available:
                     while True:
@@ -266,10 +316,15 @@ while True:
     print('1.Available flights')
     print('2. Create your account')
     print('3. login')
-    print('4.Bookings')
-    print('5.Show Booking details')
-    print('6.Cancel tickets')
-    print('7.exit')
+    print('4.Admin login')
+   
+    if loggedin:
+        print('5.Bookings')
+        print('6.Show Booking details')
+        print('7.Cancel tickets')
+    if isAdmin:
+        print('8.Add new flight details')
+    print('0.exit')   
     choice = int(input('enter your choice: '))
     if choice == 1:
         Available_flights()
@@ -278,12 +333,19 @@ while True:
     elif choice == 3:
         login()
     elif choice == 4:
+        Adminlogin()
+        
+    elif choice == 5 and loggedin:
         bookings() 
-    elif choice == 5:
+    elif choice == 6 and loggedin:
         showBookings()  
-    elif choice == 6:
+    elif choice == 7 and loggedin:
         cancel_booking()
-    elif choice == 7:
+    elif choice == 8 and isAdmin:
+        Add_new_Flight()
+    elif choice == 0:
         exit()
         break
-
+    
+    else:
+        print('enter a valid choice') 
