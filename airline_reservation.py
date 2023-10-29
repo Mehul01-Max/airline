@@ -1,5 +1,6 @@
 import mysql.connector
 from tabulate import tabulate
+import csv
 con = mysql.connector.connect(host = 'localhost' ,
  user = 'root' ,
  passwd = 'OSO$m39{',
@@ -25,10 +26,27 @@ cursor.execute("insert ignore into Admin_Details (Ad_name , Address , Phone_no ,
 cursor.execute("insert ignore into customer_Details (customer_name , Address , Phone_no , email)  values('harshil Agarwal' , 'Hindmotor' , 6291771357 , 'harshilagarwalmehul423@gmail.com')")
 
 con.commit()
-
-
-
 user = []
+
+with open('logindetails.csv') as f:
+    reader = csv.reader(f)
+    for row in reader:
+        user.append(row)
+
+if user == []:
+    pass
+else:
+    for i in user:
+        user = i
+        if i[-1] == 'Admin':
+            loggedin = True
+            isAdmin = True
+            print('you are successfully logged as' , i[1],'(Admin)')
+        elif i[-1] == 'Customer':
+            loggedin = True
+            print('you are successfully logged as' , i[1])
+
+f.close()
 def Add_new_Flight():
     if isAdmin:
         flight_no = int(input('Enter the flight number: '))
@@ -90,12 +108,17 @@ def login():
             loggedin = True
             isAdmin = False 
             user = i
+            with open('logindetails.csv' , 'w' ) as f:
+                writer = csv.writer(f)
+                writer.writerow([i[0], i[1] , i[2] , i[3] , i[4],  'Customer'])
+            f.close()
             break
         else:
             loggedin = False
             
     if loggedin == False:
         print('invalid credentials please try again or create a new account')
+    
 def Adminlogin():
     global loggedin
     global user
@@ -111,6 +134,10 @@ def Adminlogin():
             loggedin = True
             isAdmin = True
             user = i
+            with open('logindetails.csv' , 'w' ) as f:
+                writer = csv.writer(f)
+                writer.writerow([i[0] , i[1] , i[2] , i[3] , i[4] ,  'Admin'])
+            f.close()
             break
         else:
             loggedin = False
@@ -332,6 +359,7 @@ def cancel_booking():
 def exit():
     print('The program is succesfully ended')
 while True:
+    
     print('1.Available flights')
     print('2. Create your account')
     print('3. login')
@@ -343,9 +371,13 @@ while True:
         print('7.Cancel tickets')
     if isAdmin:
         print('8.Add new flight details')
-    print('0.exit')   
-    try:
-        choice = int(input('enter your choice: '))
+    if loggedin == True:
+        print('9.log out')
+    print('0.exit')  
+    
+    choice = input('enter your choice: ')
+    if choice.isnumeric():
+        choice = int(choice)
         if choice == 1:
             Available_flights()
         elif choice == 2:
@@ -362,13 +394,20 @@ while True:
             cancel_booking()
         elif choice == 8 and isAdmin:
             Add_new_Flight()
+        elif choice == 9 and loggedin: 
+            f = open('logindetails.csv' , 'w')
+            f.close()
+            loggedin = False
+            isAdmin = False
+            
+            user.clear()
         elif choice == 0:
             exit()
             break
-        else:
-            print('invalid choice') 
-    except:
-        print('invalid choice')
+    else:
+            print('invalid choice')
+        
+    
     
     
         
