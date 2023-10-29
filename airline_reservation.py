@@ -22,6 +22,8 @@ cursor.execute("insert ignore into Available_flights values(502 , 'INDIGO' , 'KO
 cursor.execute("insert ignore into Available_flights values(601 , 'SPICEJET' , 'NEW DELHI' , 'DUBAI' , '19:15:00' , '2023-11-03' , '20:05:00' , '2023-11-03' ,13279,  5)")
 
 cursor.execute("insert ignore into Admin_Details (Ad_name , Address , Phone_no , email)  values('Mehul Agarwal' , 'Hindmotor' , 9330562599 , 'agarwalmehul423@gmail.com')")
+cursor.execute("insert ignore into customer_Details (customer_name , Address , Phone_no , email)  values('harshil Agarwal' , 'Hindmotor' , 6291771357 , 'harshilagarwalmehul423@gmail.com')")
+
 con.commit()
 
 
