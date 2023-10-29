@@ -2,14 +2,50 @@ import mysql.connector
 from tabulate import tabulate
 con = mysql.connector.connect(host = 'localhost' ,
  user = 'root' ,
- passwd = 'root',
- database = 'flight_ticket_booking_system')
+ passwd = 'OSO$m39{',
+)
 cursor = con.cursor()
 loggedin = False
+isAdmin =False
+cursor.execute("create database if not exists flight_booking_system")
+cursor.execute("use flight_booking_system")
+cursor.execute("create table if not exists Available_flights(flight_no int NOT NULL PRIMARY KEY, Airline varchar(30), Departure varchar(30) , Arrival varchar(30) , Departure_time time, Departure_date date , Arrival_time time, Arrival_date date ,Price float, Available_seat int)")
+cursor.execute("create table if not exists booking_details(ID bigint AUTO_INCREMENT NOT NULL PRIMARY KEY, Passenger_Name varchar(30) , Booking_ID bigint, PNR_no bigint, Booked_by varchar(40) , flight_no int)")
+cursor.execute("create table if not exists Customer_details(CUS_ID bigint AUTO_INCREMENT NOT NULL PRIMARY KEY,Customer_name varchar(30) , Address varchar(100) , Phone_no bigint , email varchar(50))")
+cursor.execute("insert into Available_flights values(401 , 'AIR INDIA EXPRESS' , 'KOLKATA' , 'SURAT' , '11:20:00' , '2023-11-06' , '14:25:00' , '2023-11-06' , 5999, 155)")
+cursor.execute("insert into Available_flights values(402 , 'AIR INDIA' , 'MUMBAI' , 'KOLKATA' , '06:00:00' , '2023-11-05' , '08:40:00' , '2023-11-05' ,9227, 90)")
+cursor.execute("insert into Available_flights values(403 , 'VISTARA' , 'NEW DELHI' , 'PARIS' , '13:45:00' , '2023-11-03' , '18:40:00' , '2023-11-03' ,27910,  55)")
+cursor.execute("insert into Available_flights values(404 , 'VISTARA' , 'LONDON' , 'MUMBAI' , '20:55:00' , '2023-11-04' , '11:45:00' , '2023-11-05' ,63357,  99)")
+cursor.execute("insert into Available_flights values(501 , 'INDIG0' , 'NEW DELHI' , 'MUMBAI' , '14:00:00' , '2023-11-03' , '16:20:00' , '2023-11-03' ,5357,  14)")
+cursor.execute("insert into Available_flights values(502 , 'INDIGO' , 'KOLKATA' , 'JAIPUR' , '08:15:00' , '2023-11-02' , '10:45:00' , '2023-11-02' ,8624,  65)")
+cursor.execute("insert into Available_flights values(601 , 'SPICEJET' , 'NEW DELHI' , 'DUBAI' , '19:15:00' , '2023-11-03' , '20:05:00' , '2023-11-03' ,13279,  5)")
+con.commit()
+
+
 
 user = []
+def Add_new_Flight():
+    if isAdmin:
+        flight_no = int(input('Enter the flight number: '))
+        Airline = input('Enter the name of the Airline: ').upper()
+        Departure = input('Enter the Departure city: ').upper()
+        Arrival = input('Enter the Arrival city: ').upper()
+        Departure_time = input('Enter Departure time(00:00:00 format): ')
+        Departure_Date = input('enter the departure date(yy-mm-dd): ')
+        Arrival_time = input('Enter Arrival time(00:00:00 format): ')
+        Arrival_Date = input('enter the Arrival date(yy-mm-dd): ')
+        Price = float(input('enter ticket price: '))
+        Available_seat = int(input('Enter the Available_seats: '))
+        sql = "insert inot Available_flights values(%s, %s , %s , %s , %s , %s , %s , %s , %s , %s)"
+        values = (flight_no , Airline , Departure ,Arrival, Departure_time, Departure_Date , Arrival_time , Arrival_Date , Price , Available_seat)
+        cursor.execute(sql  , values)
+        con.commit()
+        print('New flight is successfully added to the booking list')
+    else:
+        print('you are not a admin')
+
 def Available_flights():
-    cursor.execute('Select * from Available_flights where Available_seat <> 0')
+    cursor.execute('Select * from Available_flights where Available_seat <> 0') 
     display = cursor.fetchall()
     head = ['Flight No' , 'Airline' , 'Departure' , 'Arrival' , 'Departure time' , 'Departure Date' , 'Arrival Time' , 'Arrival Date' , 'Price' , 'Available Seat']
     print(tabulate(display , headers=head, tablefmt='grid'))
