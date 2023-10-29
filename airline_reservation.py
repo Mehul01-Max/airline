@@ -124,7 +124,10 @@ def bookings():
     global user
     global isAdmin
     Available_flights()
-    flight_no = int(input('Enter Flight number: '))
+    try:
+        flight_no = int(input('Enter Flight number: '))
+    except:
+        print('invalid flight no')
     isflight = False
     passengers =[]
     passengers.clear()
@@ -140,7 +143,10 @@ def bookings():
                 isflight = True
                 total_seats = i[-1] 
         if isflight == True:
-            no_of_tickets = int(input('Enter the number of tickets you what to buy: '))
+            try:
+                no_of_tickets = int(input('Enter the number of tickets you what to buy: '))
+            except:
+                print('please enter a number')
             if total_seats >= no_of_tickets:
                 for i in range(no_of_tickets):
                     Name = input('enter the name of passenger: ')
@@ -230,11 +236,19 @@ def cancel_booking():
             booked_by = (user[1]+'('+str(user[0])+')',)
             print('1.For cancelling individual tickets')    
             print('2.For cancelling all the tickets you booked together') 
-            choice = int(input('Enter your choice: '))
+            try:
+                choice = int(input('Enter your choice: '))
+            except:
+                print('invalid choice')
+                break
             if choice == 1:
                 Available = False
                 name = input('enter the name of the person: ')
-                pnr_no = int(input('enter PNR NO: '))
+                try:
+                    pnr_no = int(input('enter PNR NO: '))
+                except:
+                    print('invalid pnr no')
+                    break
                 for i in display:
                     if isAdmin == False:
                         if i[1] == name and i[3] == pnr_no and i[4] == booked_by:
@@ -272,7 +286,10 @@ def cancel_booking():
                 else:
                     print('you have no tickets booked with given criteria')
             elif choice == 2:
-                pnr_no = int(input('enter PNR NO: '))
+                try:
+                    pnr_no = int(input('enter PNR NO: '))
+                except:
+                    print('invalid choice')
                 available = False
                 for i in display:
                     if i[3] == pnr_no:
@@ -327,25 +344,31 @@ while True:
     if isAdmin:
         print('8.Add new flight details')
     print('0.exit')   
-    choice = int(input('enter your choice: '))
-    if choice == 1:
-        Available_flights()
-    elif choice == 2:
-        create_CUS_ID()
-    elif choice == 3:
-        login()
-    elif choice == 4:
-        Adminlogin()
-    elif choice == 5 and loggedin:
-        bookings() 
-    elif choice == 6 and loggedin:
-        showBookings()  
-    elif choice == 7 and loggedin:
-        cancel_booking()
-    elif choice == 8 and isAdmin:
-        Add_new_Flight()
-    elif choice == 0:
-        exit()
-        break
-    else:
-        print('enter a valid choice') 
+    try:
+        choice = int(input('enter your choice: '))
+        if choice == 1:
+            Available_flights()
+        elif choice == 2:
+            create_CUS_ID()
+        elif choice == 3:
+            login()
+        elif choice == 4:
+            Adminlogin()
+        elif choice == 5 and loggedin:
+            bookings() 
+        elif choice == 6 and loggedin:
+            showBookings()  
+        elif choice == 7 and loggedin:
+            cancel_booking()
+        elif choice == 8 and isAdmin:
+            Add_new_Flight()
+        elif choice == 0:
+            exit()
+            break
+        else:
+            print('invalid choice') 
+    except:
+        print('invalid choice')
+    
+    
+        
