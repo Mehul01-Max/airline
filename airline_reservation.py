@@ -151,9 +151,11 @@ def bookings():
     global user
     global isAdmin
     Available_flights()
-    try:
-        flight_no = int(input('Enter Flight number: '))
-    except:
+    
+    flight_no = input('Enter Flight number: ')
+    if flight_no.isnumeric():
+        flight_no = int(flight_no)
+    else:
         print('invalid flight no')
     isflight = False
     passengers =[]
@@ -170,10 +172,13 @@ def bookings():
                 isflight = True
                 total_seats = i[-1] 
         if isflight == True:
-            try:
-                no_of_tickets = int(input('Enter the number of tickets you what to buy: '))
-            except:
+            
+            no_of_tickets = input('Enter the number of tickets you what to buy: ')
+            if no_of_tickets.isnumeric():
+                no_of_tickets = int(no_of_tickets)
+            else:
                 print('please enter a number')
+                
             if total_seats >= no_of_tickets:
                 for i in range(no_of_tickets):
                     Name = input('enter the name of passenger: ')
@@ -263,17 +268,21 @@ def cancel_booking():
             booked_by = (user[1]+'('+str(user[0])+')',)
             print('1.For cancelling individual tickets')    
             print('2.For cancelling all the tickets you booked together') 
-            try:
-                choice = int(input('Enter your choice: '))
-            except:
+            
+            choice = input('Enter your choice: ')
+            if choice.isnumeric():
+                choice = int(choice)
+            else:
                 print('invalid choice')
-                break
+                
             if choice == 1:
                 Available = False
                 name = input('enter the name of the person: ')
-                try:
-                    pnr_no = int(input('enter PNR NO: '))
-                except:
+                
+                pnr_no = input('enter PNR NO: ')
+                if pnr_no.isnumeric():
+                    pnr_no = int(pnr_no)
+                else:
                     print('invalid pnr no')
                     break
                 for i in display:
@@ -313,9 +322,11 @@ def cancel_booking():
                 else:
                     print('you have no tickets booked with given criteria')
             elif choice == 2:
-                try:
-                    pnr_no = int(input('enter PNR NO: '))
-                except:
+                
+                pnr_no = input('enter PNR NO: ')
+                if pnr_no.isnumeric():
+                    pnr_no = int(pnr_no)
+                else:
                     print('invalid choice')
                 available = False
                 for i in display:
