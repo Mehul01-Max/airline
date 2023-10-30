@@ -456,10 +456,11 @@ while True:
         print('4.Admin login')
    
     if loggedin and isAdmin == False:
-        print('5.Bookings')
+        print('5.Booking tickets')
+        print('7.Cancel tickets')
     if loggedin:
         print('6.Show Booking details')
-        print('7.Cancel tickets')
+        
     if isAdmin:
         print('8.Add new flight details')
         print('9. cancel flights')
@@ -482,7 +483,7 @@ while True:
             bookings() 
         elif choice == 6 and loggedin:
             showBookings()  
-        elif choice == 7 and loggedin:
+        elif choice == 7 and loggedin and isAdmin == False:
             cancel_booking()
         elif choice == 8 and isAdmin:
             Add_new_Flight()
