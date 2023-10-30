@@ -4,7 +4,7 @@ import csv
 import os
 con = mysql.connector.connect(host = 'localhost' ,
  user = 'root' ,
- passwd = '',
+ passwd = 'OSO$m39{',
 )
 cursor = con.cursor()
 loggedin = False
@@ -28,7 +28,10 @@ cursor.execute("insert ignore into customer_Details (customer_name , Address , P
 
 con.commit()
 user = []
-
+f = open('logindetails.csv' , 'w')
+f.close()
+f = open('consolation.csv' , 'w')
+f.close()
 with open('logindetails.csv') as f:
     reader = csv.reader(f)
     for row in reader:
