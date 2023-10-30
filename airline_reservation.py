@@ -1,6 +1,7 @@
 import mysql.connector
 from tabulate import tabulate
 import csv
+import os
 con = mysql.connector.connect(host = 'localhost' ,
  user = 'root' ,
  passwd = 'OSO$m39{',
@@ -23,7 +24,7 @@ cursor.execute("insert ignore into Available_flights values(502 , 'INDIGO' , 'KO
 cursor.execute("insert ignore into Available_flights values(601 , 'SPICEJET' , 'NEW DELHI' , 'DUBAI' , '19:15:00' , '2023-11-03' , '20:05:00' , '2023-11-03' ,13279,  5)")
 
 cursor.execute("insert ignore into Admin_Details (Ad_name , Address , Phone_no , email)  values('Mehul Agarwal' , 'Hindmotor' , 9330562599 , 'agarwalmehul423@gmail.com')")
-cursor.execute("insert ignore into customer_Details (customer_name , Address , Phone_no , email)  values('harshil Agarwal' , 'Hindmotor' , 6291771357 , 'harshilagarwalmehul423@gmail.com')")
+cursor.execute("insert ignore into customer_Details (customer_name , Address , Phone_no , email)  values('harshil Agarwal' , 'Hindmotor' , 6291771357 , 'harshilagarwal300@gmail.com')")
 
 con.commit()
 user = []
@@ -47,6 +48,33 @@ else:
             print('you are successfully logged as' , i[1])
 
 f.close()
+
+
+def consolation_messages():
+    if loggedin:
+        display = []
+        global user
+        current_user = user[1]+"("+str(user[0])+")"
+        with open('consolation.csv') as f:
+            reader = csv.reader(f)
+            for row in reader:
+                display.append(row)
+        f.close()
+        for i in display:
+            if current_user == i[4]:
+                print(i[-1])
+                break
+        with open("consolation.csv","r+") as r, open("output.csv","w") as f:
+            writer=csv.writer(f)
+            reader = csv.reader(r)
+            for row in reader:
+                if  current_user == row[4]:
+                    pass
+                else:
+                    writer.writerow(row)
+        os.remove('consolation.csv')
+        os.rename('output.csv', "consolation.csv")
+
 def Add_new_Flight():
     if isAdmin:
         flight_no = int(input('Enter the flight number: '))
@@ -172,60 +200,64 @@ def bookings():
                 isflight = True
                 total_seats = i[-1] 
         if isflight == True:
-            
-            no_of_tickets = input('Enter the number of tickets you what to buy: ')
-            if no_of_tickets.isnumeric():
-                no_of_tickets = int(no_of_tickets)
-            else:
-                print('please enter a number')
-                
-            if total_seats >= no_of_tickets:
-                for i in range(no_of_tickets):
-                    Name = input('enter the name of passenger: ')
-                    passengers.append(Name)
-                
-                cursor.execute('Select Booking_ID from Booking_details')
-                p = cursor.fetchall()
-                if p == []:
-                    Booking_Id = 1000
-                else: 
-                    Booking_Id = p[-1][0] + 1
-                for i in passengers:
+            while True:   
+                no_of_tickets = input('Enter the number of tickets you what to buy(exit to stop the proccess): ')
+                if no_of_tickets.isnumeric():
+                    no_of_tickets = int(no_of_tickets)
+                    break
+                elif no_of_tickets.lower() == 'exit':
+                    break
+                else:
+                    print('please enter a number')
                     
-                    if isAdmin == False:
-                        values = (i , Booking_Id , int(str(flight_no) + str(Booking_Id)) , user[1]+'('+str(user[0])+')' , flight_no )
-                    elif isAdmin:
-                        values = (i , Booking_Id , int(str(flight_no) + str(Booking_Id)) , user[1]+'(Admin('+str(user[0])+'))' , flight_no )
-                    display_lst.append(list(values))
-                header = ['Name' , 'Booking ID' , 'PNR NO' , 'BOOKED BY' , 'Flight No']
-                print(tabulate(display_lst , headers=header, tablefmt='grid'))
-                
-                while True:
-                    confirmer = input('do you want to proceed? (Y/N)')
-                    if confirmer == 'Y' or confirmer == 'y':
-                        for i in passengers:
-                            sql = "insert into Booking_Details (Passenger_Name , Booking_ID,  PNR_no  ,  Booked_By , Flight_no) values( %s , %s , %s, %s ,%s);"
-                            if isAdmin == False:
-                                values = (i , Booking_Id , int(str(flight_no) + str(Booking_Id)) , user[1]+'('+str(user[0])+')' , flight_no )
-                            elif isAdmin:
-                                values = (i , Booking_Id , int(str(flight_no) + str(Booking_Id)) , user[1]+'(Admin('+str(user[0])+'))' , flight_no )
+            if no_of_tickets.isnumeric():  
+                if total_seats >= no_of_tickets:
+                    for i in range(no_of_tickets):
+                        Name = input('enter the name of passenger: ')
+                        passengers.append(Name)
+                    
+                    cursor.execute('Select Booking_ID from Booking_details')
+                    p = cursor.fetchall()
+                    if p == []:
+                        Booking_Id = 1000
+                    else: 
+                        Booking_Id = p[-1][0] + 1
+                    for i in passengers:
+                        
+                        if isAdmin == False:
+                            values = (i , Booking_Id , int(str(flight_no) + str(Booking_Id)) , user[1]+'('+str(user[0])+')' , flight_no )
+                        elif isAdmin:
+                            values = (i , Booking_Id , int(str(flight_no) + str(Booking_Id)) , user[1]+'(Admin('+str(user[0])+'))' , flight_no )
+                        display_lst.append(list(values))
+                    header = ['Name' , 'Booking ID' , 'PNR NO' , 'BOOKED BY' , 'Flight No']
+                    print(tabulate(display_lst , headers=header, tablefmt='grid'))
+                    
+                    while True:
+                        confirmer = input('do you want to proceed? (Y/N)')
+                        if confirmer == 'Y' or confirmer == 'y':
+                            for i in passengers:
+                                sql = "insert into Booking_Details (Passenger_Name , Booking_ID,  PNR_no  ,  Booked_By , Flight_no) values( %s , %s , %s, %s ,%s);"
+                                if isAdmin == False:
+                                    values = (i , Booking_Id , int(str(flight_no) + str(Booking_Id)) , user[1]+'('+str(user[0])+')' , flight_no )
+                                elif isAdmin:
+                                    values = (i , Booking_Id , int(str(flight_no) + str(Booking_Id)) , user[1]+'(Admin('+str(user[0])+'))' , flight_no )
+                                cursor.execute(sql , values)
+                                con.commit()
+                            seats_left = total_seats - no_of_tickets
+                            sql = ('UPDATE Available_flights SET Available_seat = %s where flight_no = %s')
+                            values = (seats_left , flight_no)
                             cursor.execute(sql , values)
                             con.commit()
-                        seats_left = total_seats - no_of_tickets
-                        sql = ('UPDATE Available_flights SET Available_seat = %s where flight_no = %s')
-                        values = (seats_left , flight_no)
-                        cursor.execute(sql , values)
-                        con.commit()
-                        print('you tickets has been successfully booked')
-                        break
-                    elif confirmer == 'N' or confirmer == 'n':
+                            print('you tickets has been successfully booked')
+                            break
+                        elif confirmer == 'N' or confirmer == 'n':
+                            
+                            break
+                        else:
+                            print('please type Y for yes or N for no')
                         
-                        break
-                    else:
-                        print('please type Y for yes or N for no')
-                        
-            else:
-                print('Not enough seats')
+                else:
+                    print('Not enough seats')
                 
         else: 
             print('No flight match the criteria')
@@ -367,24 +399,69 @@ def cancel_booking():
             break   
     else:
         print('Not logged in')
+
+def cancel_flight():
+    Available_flights()
+    if isAdmin:
+        
+        flight_no = input('enter the flight to be cancelled: ')
+        if flight_no.isnumeric():
+            flight_no = int(flight_no)
+        else:
+            print('enter a valid flight number')
+        sql = 'select * from Available_flights where flight_no = %s'
+        values = (flight_no , )
+        cursor.execute(sql , values)
+        display = cursor.fetchall()
+        head = ['Flight No' , 'Airline' , 'Departure' , 'Arrival' , 'Departure time' , 'Departure Date' , 'Arrival Time' , 'Arrival Date' , 'Price' , 'Available Seat']
+        print(tabulate(display , headers=head, tablefmt='grid'))
+        confirmer = input('Are you sure you want to cancel the flight?(this process cannot be undone)(y/n/exit)): ')
+        if confirmer == 'y' or confirmer == 'Y':
+            sql = 'DELETE FROM available_flights where flight_no = %s'
+            values = (flight_no , )
+            cursor.execute(sql , values)
+            con.commit()
+            consolation_message = 'the flight with flight no :' + ' ' + str(flight_no) + ' ' + 'has been cancelled! , your amount will be refunded to your back account! sorry for incovience caused'
+            sql = 'select * from booking_details where flight_no = %s'
+            values = (flight_no , )
+            cursor.execute(sql , values)
+            display = cursor.fetchall()
+            with open('consolation.csv' , 'w' ) as f:
+                writer = csv.writer(f)
+                for i in display:
+                    writer.writerow([i[0], i[1] , i[2] , i[3] , i[4], consolation_message])
+            f.close()
+            sql = 'DELETE FROM booking_details where flight_no = %s'
+            values = (flight_no , )
+            cursor.execute(sql , values)
+            con.commit()
+        elif confirmer == 'n' or confirmer == 'N':
+            print('flight not cancelled!')
+        elif confirmer.lower() == 'exit':
+            print('you are back to main menu')
+        else:
+            print('enter a valid option')
+
 def exit():
     print('The program is succesfully ended')
 while True:
-     
+    consolation_messages()
     print('1.Available flights')
     if loggedin == False:
         print('2. Create your account')
         print('3. login')
         print('4.Admin login')
    
-    if loggedin:
+    if loggedin and isAdmin:
         print('5.Bookings')
+    if loggedin:
         print('6.Show Booking details')
         print('7.Cancel tickets')
     if isAdmin:
         print('8.Add new flight details')
-    if loggedin == True:
-        print('9.log out')
+        print('9. cancel flights')
+    if loggedin:
+        print('10.log out')
     print('0.exit')  
     
     choice = input('enter your choice: ')
@@ -398,7 +475,7 @@ while True:
             login()
         elif choice == 4 and loggedin == False:
             Adminlogin()
-        elif choice == 5 and loggedin:
+        elif choice == 5 and loggedin and isAdmin == False:
             bookings() 
         elif choice == 6 and loggedin:
             showBookings()  
@@ -406,7 +483,9 @@ while True:
             cancel_booking()
         elif choice == 8 and isAdmin:
             Add_new_Flight()
-        elif choice == 9 and loggedin: 
+        elif choice == 9 and isAdmin:
+            cancel_flight()
+        elif choice == 10 and loggedin: 
             f = open('logindetails.csv' , 'w')
             f.close()
             loggedin = False
