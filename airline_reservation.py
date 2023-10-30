@@ -4,7 +4,7 @@ import csv
 import os
 con = mysql.connector.connect(host = 'localhost' ,
  user = 'root' ,
- passwd = 'OSO$m39{',
+ passwd = '',
 )
 cursor = con.cursor()
 loggedin = False
@@ -210,7 +210,7 @@ def bookings():
                 else:
                     print('please enter a number')
                     
-            if no_of_tickets.isnumeric():  
+            if str(no_of_tickets).isnumeric():  
                 if total_seats >= no_of_tickets:
                     for i in range(no_of_tickets):
                         Name = input('enter the name of passenger: ')
@@ -297,7 +297,7 @@ def cancel_booking():
             display = cursor.fetchall()
             header = ['Name' , 'Booking ID' , 'PNR NO' , 'BOOKED BY' , 'Flight No']
             print(tabulate(display , headers=header, tablefmt='grid'))
-            booked_by = (user[1]+'('+str(user[0])+')',)
+            booked_by = user[1]+'('+str(user[0])+')'
             print('1.For cancelling individual tickets')    
             print('2.For cancelling all the tickets you booked together') 
             
@@ -362,7 +362,7 @@ def cancel_booking():
                     print('invalid choice')
                 available = False
                 for i in display:
-                    if i[3] == pnr_no:
+                    if i[3] == pnr_no and i[4] == booked_by:
                         cancelled_passengers.append(list(i))
                         available = True
                     
@@ -452,7 +452,7 @@ while True:
         print('3. login')
         print('4.Admin login')
    
-    if loggedin and isAdmin:
+    if loggedin and isAdmin == False:
         print('5.Bookings')
     if loggedin:
         print('6.Show Booking details')
